@@ -35,19 +35,19 @@ class expenseModel{
         this.category = category
         this.userEmail = userEmail
     }
-    save() {
-    const db = getDb();
-    return db.collection('expense').insertOne(this);
+    async save() {
+    const db = await getDb();
+    return await db.collection('expense').insertOne(this);
   }
-static findByField(field, value) {
-  const db = getDb();
+static async findByField(field, value) {
+  const db = await getDb();
   let query = {};
   if (field === '_id') {
     query[field] = new ObjectId(value);
   } else {
     query[field] = value;
   }
-  return db
+  return await db
     .collection('expense')
     .findOne(query)
     .then(user => {
@@ -57,9 +57,9 @@ static findByField(field, value) {
       console.log(err);
     });
 }
-  static deleteById(expenseId) {
-    const db = getDb();
-    return db
+  static async deleteById(expenseId) {
+    const db =await getDb();
+    return await db
         .collection('expense')
         .deleteOne({ _id: new ObjectId(expenseId) })
         .then(result => {
@@ -70,10 +70,10 @@ static findByField(field, value) {
         });
 }
 
-  static findByEmail(userEmail){
+  static async findByEmail(userEmail){
  
-  const db = getDb();
-  return db
+  const db = await getDb();
+  return await db
     .collection('expense')
     .find({ userEmail: userEmail })
     .toArray()

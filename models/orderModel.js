@@ -20,9 +20,9 @@
 const getDb = require('../util/database').getDb;
 const { ObjectId } = require('mongodb');
 class orderModel{
-    static addOrderData(orderData){
-        const db = getDb();
-        return db
+    static async  addOrderData(orderData){
+        const db = await getDb();
+        return await db
           .collection('Order')
           .insertOne(orderData)
           .then(result => {
@@ -33,10 +33,10 @@ class orderModel{
             console.log(err);
           });
       }
-      static findById(id){
+      static async  findById(id){
  
         const db = getDb();
-        return db
+        return await db
           .collection('Order')
           .find({ orderId: id })
           .then(result=> {
@@ -46,9 +46,9 @@ class orderModel{
             console.log(err);
           });
       }
-      static update(id,status){
+      static async  update(id,status){
         const db = getDb();
-        return db
+        return await db
           .collection('Order')
           .updateOne(
             { orderId: id },

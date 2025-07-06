@@ -15,9 +15,9 @@ const getDb = require('../util/database').getDb;
 
 const ObjectId = mongodb.ObjectId;
 class forgotPasswordModel{
-static findOne( ids ){
-  const db = getDb();
-  return db
+static async findOne( ids ){
+  const db = await getDb();
+  return await db
     .collection('forgotPassword')
     .findOne({ id:ids })
     .then(result => {
@@ -27,9 +27,9 @@ static findOne( ids ){
       console.log(err);
     });
 }
-static update(ids){
-  const db = getDb();
-  return db
+static async update(ids){
+  const db = await getDb();
+  return await db
     .collection('forgotPassword')
     .updateOne({ id: ids }, { $set: { isActive: false } })
     .then(result => {
@@ -40,9 +40,9 @@ static update(ids){
       console.log(err);
     });
 }
-static addForgotPwd(forgotData){
-  const db = getDb();
-  return db
+static async addForgotPwd(forgotData){
+  const db = await getDb();
+  return await db
     .collection('forgotPassword')
     .insertOne(forgotData)
     .then(result => {

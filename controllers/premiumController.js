@@ -8,6 +8,7 @@ const premiumController = {
 
         try {
             const findLeaderBoard = await userModel.findAll();
+            findLeaderBoard .sort((a, b) => b.totalTransaction - a.totalTransaction);
 
             res.status(200).send(findLeaderBoard)
 

@@ -11,16 +11,16 @@ const authMiddleware = async (req, res, next) => {
      userModel.findByField('userEmail', email)
      .then(async(user) => {
       
-      const verifyPwd = await bcrypt.compare(password, user.userPwd)
+      const verifyPwd = await bcrypt.compare(password, user.userPwd);
         if (verifyPwd) {
-            req.user = new userModel(
+        req.user = await new userModel(
                 user.username,
                 user.userEmail,
                 user.userPhone,
                 user.userPwd,
                 user.totalTransaction,
                 user.isPremiumUser
-            )
+            );
             next()
         }
         else {

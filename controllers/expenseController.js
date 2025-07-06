@@ -13,7 +13,7 @@ const expenseController = {
             
             
             const addedExpense =  new expenseModel(date, name, price, category, userEmail )
-            addedExpense.save();
+            await addedExpense.save();
             const oldTransactions = Number(totalTransaction)
             const currAmount = Number(price)
             await userModel.update(req.user.userEmail, { totalTransaction:  oldTransactions + currAmount } )

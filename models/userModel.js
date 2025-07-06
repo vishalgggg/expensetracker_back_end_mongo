@@ -64,11 +64,11 @@ class User {
 //       console.log(err);
 //     });
 // }
-save() {
+async save() {
     const db = getDb();
     return db.collection('users').insertOne(this);
 }
-static update(userId, updateObj){
+static async update(userId, updateObj){
   const db = getDb();
   return db
     .collection('users')
@@ -84,9 +84,9 @@ static update(userId, updateObj){
       console.log(err);
     });
 }
-static findAll() {
-  const db = getDb();
-  return db
+static async findAll() {
+  const db = await getDb();
+  return await db
     .collection('users')
     .find({}, { projection: { username: 1, totalTransaction: 1, _id: 0 } })
     .toArray()
@@ -97,15 +97,15 @@ static findAll() {
       console.log(err);
     });
 }
-static findByField(field, value) {
-  const db = getDb();
+static async findByField(field, value) {
+  const db = await getDb();
   let query = {};
   if (field === '_id') {
     query[field] = new ObjectId(value);
   } else {
     query[field] = value;
   }
-  return db
+  return await db
     .collection('users')
     .findOne(query)
     .then(user => {

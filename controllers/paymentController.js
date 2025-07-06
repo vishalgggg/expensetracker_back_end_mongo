@@ -8,7 +8,7 @@ Cashfree.XClientId = process.env.CF_CLIENT_ID;
 Cashfree.XClientSecret = process.env.CF_CLIENT_SECRET;
 Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
 
-
+const userModel = require('../models/userModel')
 const paymentController = {
     buyPremium: async (req, res) => {
         const  id  = req.user.userEmail;
@@ -18,24 +18,24 @@ const paymentController = {
             const expiryDate = new Date(Date.now() +  60 * 60 * 1000); // 1 hour from now
             const formattedExpiryDate = expiryDate.toISOString();
             const order = {
-                order_id: orderId,
-                order_amount: amount,
-                order_currency: 'INR',
-                order_note: 'Premium subscription',
-                customer_details: {
-                    customer_id: id.toString(), // Ensure this is a string
-                    customer_email: req.user.userEmail,
-                    customer_phone: req.user.userPhone
+                "order_id": orderId,
+                "order_amount": amount,
+                "order_currency": 'INR',
+                "order_note": 'Premium subscription',
+                "customer_details": {
+                    "customer_id": "fhgrhrw", // Ensure this is a string
+                    "customer_email": req.user.userEmail,
+                    "customer_phone": req.user.userPhone
                 },
-                order_meta: {
-                    return_url: `http://localhost:4000/payment/updatepremiumstatus/${orderId}`, // Set your return URL here
-                    payment_methods: "ccc, upi, nb"
+                "order_meta": {
+                    "return_url": `http://localhost:4000/payment/updatepremiumstatus/${orderId}`, // Set your return URL here
+                    "payment_methods": "ccc, upi, nb"
                     
                 },
-                order_expiry_time : formattedExpiryDate
+                "order_expiry_time" : formattedExpiryDate
             };
             // console.log("Order data being sent to Cashfree: ", order);
-            const response = await Cashfree.PGCreateOrder("2025-01-01", order);
+            const response = await Cashfree.PGCreateOrder("2025-01-01",order);
             // console.log("Response from Cashfree API: ", response.data);
             
             await orderModel.addOrderData({ orderId: orderId, status: 'pending', userId: id });
@@ -52,20 +52,21 @@ const paymentController = {
         try {
         let order_id= req.params;
         let orderStatus = await paymentService(order_id,Cashfree)
+        const  email  = req.user.userEmail;
+        // const findedorder = await orderModel.findById(order_id.orderId) ;
         
-        const findedorder = await orderModel.findById(order_id.orderId) ;
-        if (!findedorder) {
-            console.log("Order not found!");
-            return res.status(404).send({ status: false, message: 'Order not found' });
-        }
+        // if (!findedorder) {
+        //     console.log("Order not found!");
+        //     return res.status(404).send({ status: false, message: 'Order not found' });
+        // }
         if(orderStatus === "Success"){
-            await orderModel.update(findedorder.orderId,'success' );
-            await userModel.update(findedorder.userId,{ isPremiumUser: true }) ;
+            await orderModel.update(order_id.orderId,'success' );
+            await userModel.update(email,{ isPremiumUser: true }) ;
             res.send({ status: true });
             } 
         
         else if(orderStatus === "Pending"){
-                await orderModel.update(findedorder.orderId,'PENDING' );
+                await orderModel.update(order_id.orderId,'PENDING' );
                 res.status(400).send({ status: false, message: 'Payment pending' });
             
         }
